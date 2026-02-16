@@ -70,7 +70,7 @@ jobs:
       AUTOMATED_TESTING: 1
       RELEASE_TESTING: 1
 
-    runs-on: macOS-latest
+    runs-on: macos-latest
 
     strategy:
       fail-fast: false
@@ -79,6 +79,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl-version }}
       - run: perl -V
       - name: Makefile.PL
         run: perl -I$(pwd) Makefile.PL
@@ -101,10 +104,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Perl
-        run: |
-          choco install strawberryperl
-          echo "C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin" >> $env:GITHUB_PATH
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl-version }}
+          distribution: strawberry
       - run: perl -V
       - run: perl Makefile.PL
-      - run: make test
+      - run: gmake test
