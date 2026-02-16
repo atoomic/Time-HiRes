@@ -39,7 +39,7 @@ jobs:
 
   linux:
     name: "linux ${{ matrix.perl-version }}"
-    needs: [ubuntu,perl-versions]
+    needs: [ubuntu, perl-versions]
     env:
       PERL_USE_UNSAFE_INC: 0
       AUTHOR_TESTING: 1
@@ -51,9 +51,31 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        perl-version: ${{ fromJson (needs.perl-versions.outputs.perl-versions) }}
+        perl-version: ${{ fromJson(needs.perl-versions.outputs.perl-versions) }}
 
     container: perldocker/perl-tester:${{ matrix.perl-version }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: perl -V
+      - name: Makefile.PL
+        run: perl -I$(pwd) Makefile.PL
+      - run: make test
+
+  macOS:
+    needs: [ubuntu]
+    env:
+      PERL_USE_UNSAFE_INC: 0
+      AUTHOR_TESTING: 1
+      AUTOMATED_TESTING: 1
+      RELEASE_TESTING: 1
+
+    runs-on: macOS-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        perl-version: [latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -82,7 +104,7 @@ jobs:
       - name: Set up Perl
         run: |
           choco install strawberryperl
-          echo "C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin" >> $GITHUB_PATH
+          echo "C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin" >> $env:GITHUB_PATH
       - run: perl -V
       - run: perl Makefile.PL
       - run: make test
