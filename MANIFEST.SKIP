@@ -71,3 +71,6 @@
 Makefile.old
 const-c.inc
 const-xs.inc
+
+# Avoid Claude Code files
+^CLAUDE\.md$
