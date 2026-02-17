@@ -80,3 +80,5 @@ const-xs.inc
 
 TODO
 xdefine
+# Avoid Claude Code files
+^CLAUDE\.md$
